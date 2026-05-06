@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>iSpice Email Signature</title>
+  <style>
+    :root {
+      --green:#17330f;
+      --green-2:#275317;
+      --accent:#80C343;
+      --light:#f5faef;
+      --line:#dce9d4;
+      --ink:#111111;
+      --muted:#5e6c58;
+      --card:#ffffff;
+      --shadow:0 18px 45px rgba(23,51,15,.12);
+    }
+    * { box-sizing:border-box; }
+    body {
+      margin:0;
+      background:linear-gradient(180deg,#f6fbf1 0%,#ffffff 45%,#f8fbf5 100%);
+      color:var(--ink);
+      font-family:Aptos, Calibri, Arial, sans-serif;
+    }
+    .academy-header {
+      background:
+        radial-gradient(circle at 88% 18%, rgba(255,255,255,.24), transparent 24%),
+        linear-gradient(135deg,#10260b 0%,#275317 55%,#80C343 130%);
+      color:#ffffff;
+      padding:30px 22px;
+      border-bottom:5px solid var(--accent);
+      box-shadow:0 16px 42px rgba(23,51,15,.20);
+    }
+    .header-inner {
+      max-width:1120px;
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+    }
+    .brand {
+      display:flex;
+      align-items:center;
+      gap:16px;
+    }
+    .logo-card {
+      background:#ffffff;
+      border-radius:20px;
+      padding:11px 14px;
+      box-shadow:0 10px 25px rgba(0,0,0,.16);
+    }
+    .logo-card img {
+      display:block;
+      width:145px;
+      height:auto;
+      border:0;
+    }
+    .header-title {
+      line-height:1.05;
+    }
+    .header-title .kicker {
+      display:inline-block;
+      color:#dff7d1;
+      font-weight:800;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-size:12px;
+      margin-bottom:7px;
+    }
+    .header-title h1 {
+      margin:0;
+      font-size:clamp(28px,4vw,46px);
+      letter-spacing:-.03em;
+      font-weight:850;
+    }
+    .header-pill {
+      border:1px solid rgba(255,255,255,.28);
+      background:rgba(255,255,255,.12);
+      color:#ffffff;
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:700;
+      white-space:nowrap;
+    }
+    main {
+      max-width:1120px;
+      margin:26px auto 60px;
+      padding:0 18px;
+    }
+    .layout {
+      display:grid;
+      grid-template-columns:360px minmax(0,1fr);
+      gap:22px;
+      align-items:start;
+    }
+    .panel {
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:24px;
+      padding:22px;
+      box-shadow:var(--shadow);
+    }
+    .panel h2 {
+      margin:0 0 14px;
+      color:var(--green);
+      font-size:22px;
+      letter-spacing:-.02em;
+    }
+    .note {
+      margin:0 0 16px;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.45;
+    }
+    label {
+      display:block;
+      margin:0 0 13px;
+      font-weight:800;
+      font-size:13px;
+      color:#24381f;
+    }
+    input {
+      width:100%;
+      margin-top:7px;
+      padding:12px 13px;
+      border:1px solid #cfdcc8;
+      border-radius:14px;
+      background:#fbfdf8;
+      color:#111;
+      font:15px Aptos, Calibri, Arial, sans-serif;
+      outline:none;
+    }
+    input:focus {
+      border-color:var(--accent);
+      box-shadow:0 0 0 4px rgba(128,195,67,.18);
+      background:#ffffff;
+    }
+    .actions {
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:16px;
+      align-items:center;
+    }
+    button {
+      border:0;
+      cursor:pointer;
+      border-radius:999px;
+      padding:11px 16px;
+      font-weight:850;
+      font-family:Aptos, Calibri, Arial, sans-serif;
+    }
+    .primary {
+      background:linear-gradient(135deg,#275317,#80C343);
+      color:#ffffff;
+      box-shadow:0 10px 22px rgba(39,83,23,.20);
+    }
+    .secondary {
+      background:#ffffff;
+      color:#275317;
+      border:1px solid #cfdcc8;
+    }
+    .copy-status {
+      display:inline-flex;
+      align-items:center;
+      min-height:34px;
+      padding:0 13px;
+      border-radius:999px;
+      background:#edf8e7;
+      border:1px solid #cfe6c1;
+      color:#275317;
+      font-weight:850;
+      font-size:14px;
+      line-height:1.2;
+      opacity:0;
+      transform:translateY(2px);
+      transition:opacity .18s ease, transform .18s ease;
+    }
+    .copy-status.is-visible {
+      opacity:1;
+      transform:translateY(0);
+    }
+    .preview-panel {
+      min-width:0;
+    }
+    .signature-stage {
+      overflow:auto;
+      background:#ffffff;
+      border:2px dashed #bcd8aa;
+      border-radius:20px;
+      padding:22px;
+      min-height:190px;
+    }
+    .quick-line {
+      margin-top:14px;
+      color:#5e6c58;
+      font-size:13px;
+      line-height:1.45;
+    }
+    @media (max-width:900px) {
+      .header-inner, .brand {
+        align-items:flex-start;
+      }
+      .header-inner {
+        flex-direction:column;
+      }
+      .layout {
+        grid-template-columns:1fr;
+      }
+      .header-pill {
+        white-space:normal;
+      }
+    }
+
+    /* Professional header refresh */
+    .academy-header {
+      position:relative;
+      overflow:hidden;
+      isolation:isolate;
+      background:
+        radial-gradient(circle at var(--mx, 84%) var(--my, 24%), rgba(128,195,67,.42), transparent 19%),
+        radial-gradient(circle at 18% 18%, rgba(255,255,255,.16), transparent 24%),
+        linear-gradient(135deg,#0d2208 0%,#1f4814 52%,#5f9c31 120%);
+      padding:22px 22px;
+      border-bottom:0;
+      box-shadow:0 18px 45px rgba(23,51,15,.24);
+    }
+    .academy-header::before {
+      content:"";
+      position:absolute;
+      inset:0;
+      z-index:-2;
+      opacity:.24;
+      background-image:radial-gradient(rgba(255,255,255,.55) 1px, transparent 1.5px);
+      background-size:22px 22px;
+      transform:translate3d(calc(var(--mx, 84%) / -30), calc(var(--my, 24%) / -30), 0);
+    }
+    .academy-header::after {
+      content:"";
+      position:absolute;
+      inset:auto -10% -55% -10%;
+      height:74%;
+      z-index:-1;
+      background:radial-gradient(ellipse at center, rgba(128,195,67,.24), transparent 65%);
+      pointer-events:none;
+    }
+    .header-inner {
+      position:relative;
+      z-index:2;
+      max-width:1120px;
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:22px;
+    }
+    .logo-card {
+      background:rgba(255,255,255,.96);
+      border:1px solid rgba(255,255,255,.48);
+      border-radius:22px;
+      padding:12px 15px;
+      box-shadow:0 16px 36px rgba(0,0,0,.18);
+    }
+    .header-title h1 {
+      margin:0;
+      font-size:clamp(30px,4vw,48px);
+      letter-spacing:-.035em;
+      font-weight:900;
+      text-shadow:0 2px 18px rgba(0,0,0,.16);
+    }
+    .header-subtitle {
+      margin:8px 0 0;
+      color:rgba(255,255,255,.82);
+      font-size:15px;
+      line-height:1.45;
+      max-width:570px;
+    }
+    .header-pill {
+      border:1px solid rgba(255,255,255,.34);
+      background:rgba(255,255,255,.14);
+      backdrop-filter:blur(10px);
+      color:#ffffff;
+      padding:11px 16px;
+      border-radius:999px;
+      font-weight:850;
+      white-space:nowrap;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.18);
+    }
+    .cursor-dot {
+      position:absolute;
+      left:calc(var(--mx, 84%) - 10px);
+      top:calc(var(--my, 24%) - 10px);
+      width:18px;
+      height:18px;
+      border-radius:50%;
+      pointer-events:none;
+      z-index:1;
+      background:rgba(255,255,255,.74);
+      box-shadow:0 0 28px rgba(255,255,255,.58);
+      transition:left .18s ease, top .18s ease, transform .18s ease;
+    }
+    .cursor-dot.dot-2 {
+      width:10px;
+      height:10px;
+      transform:translate(34px, -28px);
+      background:rgba(128,195,67,.85);
+      box-shadow:0 0 25px rgba(128,195,67,.6);
+      transition-duration:.28s;
+    }
+    .cursor-dot.dot-3 {
+      width:7px;
+      height:7px;
+      transform:translate(-40px, 30px);
+      background:rgba(255,255,255,.54);
+      transition-duration:.38s;
+    }
+    .cursor-dot.dot-4 {
+      width:12px;
+      height:12px;
+      transform:translate(60px, 38px);
+      background:rgba(213,247,196,.72);
+      transition-duration:.48s;
+    }
+    .setup-footer {
+      max-width:1120px;
+      margin:0 auto 46px;
+      padding:0 18px;
+    }
+    .footer-card {
+      background:linear-gradient(180deg,#ffffff 0%,#f8fcf4 100%);
+      border:1px solid var(--line);
+      border-radius:24px;
+      padding:22px;
+      box-shadow:var(--shadow);
+    }
+    .footer-card h2 {
+      margin:0 0 14px;
+      color:var(--green);
+      font-size:22px;
+      letter-spacing:-.02em;
+    }
+    .footer-grid {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:16px;
+    }
+    .footer-step {
+      border:1px solid #dce9d4;
+      border-radius:18px;
+      padding:16px 16px 14px;
+      background:#ffffff;
+    }
+    .footer-step h3 {
+      margin:0 0 10px;
+      color:#275317;
+      font-size:16px;
+    }
+    .footer-step ol {
+      margin:0;
+      padding-left:19px;
+      color:#344030;
+      font-size:14px;
+      line-height:1.55;
+    }
+    .footer-step li {
+      margin:0 0 6px;
+    }
+    @media (max-width:900px) {
+      .footer-grid {
+        grid-template-columns:1fr;
+      }
+    }
+
+    .developer-credit{
+      max-width:1180px;
+      margin:12px auto 28px;
+      padding:0 18px;
+      text-align:center;
+      font-family:Aptos, Calibri, Arial, sans-serif;
+      font-size:10px;
+      line-height:1.3;
+      color:rgba(23,32,22,.32);
+      letter-spacing:.02em;
+    }
+
+  </style>
+</head>
+<body>
+  <header class="academy-header">
+    <span class="cursor-dot dot-1"></span>
+    <span class="cursor-dot dot-2"></span>
+    <span class="cursor-dot dot-3"></span>
+    <span class="cursor-dot dot-4"></span>
+    <div class="header-inner">
+      <div class="brand">
+        <div class="logo-card">
+          <div style="display:flex;align-items:center;gap:7px;">
+<img src="https://ispicefoods.com/wp-content/uploads/2024/05/ispice_leafcrr.png" alt="iSpice" style="display:block;width:48px;height:auto;border:0;">
+<span style="font-family:Aptos,Calibri,Arial,sans-serif;font-size:27px;font-weight:800;letter-spacing:-1.2px;color:#111;">iSpice<span style="font-weight:300;">foods</span></span>
+</div>
+        </div>
+        <div class="header-title">
+          <h1>Email Signature Center</h1>
+          <p class="header-subtitle">Update the details, apply changes, and copy the signature for Outlook.</p>
+        </div>
+      </div>
+      <div class="header-pill">Outlook-ready signature</div>
+    </div>
+  </header>
+
+  <main>
+    <section class="layout">
+      <article class="panel">
+        <h2>Employee Details</h2>
+        <p class="note">The fields are prefilled and can be changed before copying the signature.</p>
+
+        <label>Name
+          <input id="employeeName" value="Moe Sadeghzadeh" placeholder="Enter full name">
+        </label>
+        <label>Title
+          <input id="employeeTitle" value="Digital Marketing Director" placeholder="Enter position/title">
+        </label>
+        <label>Email
+          <input id="employeeEmail" value="mozad@ispicefoods.com" placeholder="name@ispicefoods.com">
+        </label>
+        <label>Phone
+          <input id="employeePhone" value="(514) 505-6005 Ext.327" placeholder="(514) 505-6005 Ext.###">
+        </label>
+
+        <div class="actions">
+          <button class="primary" type="button" onclick="applyInfo()">Apply</button>
+          <button class="secondary" type="button" onclick="resetInfo()">Reset / Clear</button>
+        </div>
+      </article>
+
+      <article class="panel preview-panel">
+        <h2>Signature Preview</h2>
+        <div class="signature-stage">
+          <div class="signature-copy-area" id="fullSignature">
+<table border="0" cellpadding="0" cellspacing="0" style="font-family:Aptos,Calibri,Arial,sans-serif;font-size:12pt;color:#000000;border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;">
+<tr>
+<td style="padding:0;vertical-align:top;">
+<table border="0" cellpadding="0" cellspacing="0">
+<!-- LOGO -->
+<tr>
+<td style="padding:0 0 10px 0;">
+<table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;">
+<tr>
+<td style="padding:0 5px 0 0;vertical-align:middle;">
+<img alt="iSpice" height="30" src="https://ispicefoods.com/wp-content/uploads/2024/05/ispice_leafcrr.png" style="display:block;border:0;outline:none;text-decoration:none;" width="48"/>
+</td>
+<td style="padding:0;vertical-align:middle;white-space:nowrap;">
+<span style="font-family:Aptos,Calibri,Arial,sans-serif;font-size:21pt;font-weight:700;letter-spacing:-1.1px;color:#111111;line-height:1;">iSpice<span style="font-weight:300;color:#111111;">foods</span><sup style="font-size:7pt;line-height:0;">®</sup></span>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<!-- NAME -->
+<tr>
+<td style="padding:2px 0 0 0;">
+<span id="sigName" style="font-family:Aptos,Calibri,Arial,sans-serif;font-size:12pt;font-weight:bold;color:#80C343;">Moe Sadeghzadeh</span>
+</td>
+</tr>
+<!-- POSITION -->
+<tr>
+<td style="padding:1px 0 8px 0;">
+<span id="sigTitle" style="font-family:Aptos,Calibri,Arial,sans-serif;font-size:12pt;color:#80C343;">Digital Marketing Director</span>
+</td>
+</tr>
+<!-- DIVIDER -->
+<tr>
+<td style="padding:0 0 8px 0;border-top:1px solid #80C343;font-size:1px;line-height:1px;"> </td>
+</tr>
+<!-- EMAIL -->
+<tr>
+<td style="padding:1px 0;">
+<a href="mailto:mozad@ispicefoods.com" id="sigEmail" style="font-family:Aptos,Calibri,Arial,sans-serif;font-size:12pt;color:#000000;text-decoration:none;">mozad@ispicefoods.com</a>
+</td>
+</tr>
+<!-- PHONE -->
+<tr>
+<td style="padding:1px 0;">
+<span id="sigPhoneNumber" style="font-family:Aptos,Calibri,Arial,sans-serif;font-size:12pt;color:#000000;">(514) 505-6005 </span><span id="sigPhoneExtLabel" style="font-family:Aptos,Calibri,Arial,sans-serif;font-size:12pt;color:#80C343;">Ext.</span><span id="sigPhoneExt" style="font-family:Aptos,Calibri,Arial,sans-serif;font-size:12pt;color:#000000;">327</span>
+</td>
+</tr>
+<!-- WEBSITE ROW (swappable) -->
+<tr>
+<td style="padding:6px 0 10px 0;">
+<table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;">
+<tr>
+<td style="padding:0;vertical-align:middle;">
+<a href="https://ispicefoods.com/our-websites/" style="font-family:Aptos,Calibri,Arial,sans-serif;font-size:12pt;font-weight:bold;color:#ffffff;background-color:#80C343;text-decoration:none;padding:5px 14px;border-radius:4px;display:inline-block;white-space:nowrap;mso-padding-alt:5px 14px;" target="_blank" title="Our Websites">Our&nbsp;Websites&nbsp;&rsaquo;</a>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+<!-- SOCIAL LINKS -->
+<tr>
+<td style="padding:4px 0 0 0;">
+<table border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;">
+<tr>
+<td style="padding:0 4px 0 0;">
+<a href="https://www.linkedin.com/company/ispice" style="font-family:Aptos,Calibri,Arial,sans-serif;font-size:9pt;font-weight:700;color:#275317;text-decoration:none;letter-spacing:.1px;" target="_blank" title="LinkedIn">LinkedIn</a>
+</td>
+<td style="padding:0 7px;color:#80C343;font-family:Aptos,Calibri,Arial,sans-serif;font-size:13pt;font-weight:700;line-height:9pt;">&bull;</td>
+<td style="padding:0 4px;">
+<a href="https://www.instagram.com/ispicefoods" style="font-family:Aptos,Calibri,Arial,sans-serif;font-size:9pt;font-weight:700;color:#275317;text-decoration:none;letter-spacing:.1px;" target="_blank" title="Instagram">Instagram</a>
+</td>
+<td style="padding:0 7px;color:#80C343;font-family:Aptos,Calibri,Arial,sans-serif;font-size:13pt;font-weight:700;line-height:9pt;">&bull;</td>
+<td style="padding:0 4px;">
+<a href="https://www.facebook.com/ispicefoods" style="font-family:Aptos,Calibri,Arial,sans-serif;font-size:9pt;font-weight:700;color:#275317;text-decoration:none;letter-spacing:.1px;" target="_blank" title="Facebook">Facebook</a>
+</td>
+<td style="padding:0 7px;color:#80C343;font-family:Aptos,Calibri,Arial,sans-serif;font-size:13pt;font-weight:700;line-height:9pt;">&bull;</td>
+<td style="padding:0 4px;">
+<a href="https://www.tiktok.com/@ispicefoods" style="font-family:Aptos,Calibri,Arial,sans-serif;font-size:9pt;font-weight:700;color:#275317;text-decoration:none;letter-spacing:.1px;" target="_blank" title="TikTok">TikTok</a>
+</td>
+<td style="padding:0 7px;color:#80C343;font-family:Aptos,Calibri,Arial,sans-serif;font-size:13pt;font-weight:700;line-height:9pt;">&bull;</td>
+<td style="padding:0 0 0 4px;">
+<a href="https://www.youtube.com/channel/UCEcNVKerJT2mRV0y8rXZDMw" style="font-family:Aptos,Calibri,Arial,sans-serif;font-size:9pt;font-weight:700;color:#275317;text-decoration:none;letter-spacing:.1px;" target="_blank" title="YouTube">YouTube</a>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</div>
+        </div>
+        <div class="actions">
+          <button class="primary" type="button" onclick="copyRichSignature('fullSignature','fullStatus')">Copy Signature with Links</button>
+          <button class="secondary" type="button" onclick="selectElement('fullSignature')">Select Manually</button>
+          <span id="fullStatus" class="copy-status" role="status" aria-live="polite"></span>
+        </div>
+        <div class="quick-line">Use the copy button first. It places the signature as HTML so Outlook keeps the links.</div>
+      </article>
+    </section>
+</main>
+
+
+  <footer class="setup-footer">
+    <div class="footer-card">
+      <h2>How to copy into Outlook</h2>
+      <div class="footer-grid">
+        <div class="footer-step">
+          <h3>Outlook for Windows</h3>
+          <ol>
+            <li>Update the employee fields, then click <strong>Apply</strong>.</li>
+            <li>Click <strong>Copy Signature with Links</strong>. If needed, use <strong>Select Manually</strong> and press <strong>Ctrl+C</strong>.</li>
+            <li>Open Outlook: <strong>File</strong> &gt; <strong>Options</strong> &gt; <strong>Mail</strong> &gt; <strong>Signatures</strong>.</li>
+            <li>Create or select a signature, paste with <strong>Ctrl+V</strong>, then save.</li>
+          </ol>
+        </div>
+        <div class="footer-step">
+          <h3>Outlook for Mac</h3>
+          <ol>
+            <li>Update the employee fields, then click <strong>Apply</strong>.</li>
+            <li>Click <strong>Copy Signature with Links</strong>. If needed, use <strong>Select Manually</strong> and press <strong>&#8984;+C</strong>.</li>
+            <li>Open Outlook: <strong>Outlook</strong> &gt; <strong>Settings</strong> &gt; <strong>Signatures</strong>.</li>
+            <li>Create or select a signature, paste with <strong>&#8984;+V</strong>, then set it as default if required.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <div class="developer-credit">Developed by Moe Sadeghzadeh</div>
+
+
+
+  <script>
+    const header = document.querySelector('.academy-header');
+    if (header) {
+      header.addEventListener('mousemove', function(event) {
+        const rect = header.getBoundingClientRect();
+        const x = ((event.clientX - rect.left) / rect.width) * 100;
+        const y = ((event.clientY - rect.top) / rect.height) * 100;
+        header.style.setProperty('--mx', x + '%');
+        header.style.setProperty('--my', y + '%');
+      });
+      header.addEventListener('mouseleave', function() {
+        header.style.setProperty('--mx', '84%');
+        header.style.setProperty('--my', '24%');
+      });
+    }
+
+    const defaultInfo = {
+      name: 'Moe Sadeghzadeh',
+      title: 'Digital Marketing Director',
+      email: 'mozad@ispicefoods.com',
+      phone: '(514) 505-6005 Ext.327'
+    };
+
+    function showCopyStatus(statusId, message, success) {
+      const status = document.getElementById(statusId);
+      if (!status) return;
+
+      status.textContent = message;
+      status.classList.add('is-visible');
+      status.style.background = success ? '#edf8e7' : '#fff8e8';
+      status.style.borderColor = success ? '#cfe6c1' : '#efd59b';
+      status.style.color = success ? '#275317' : '#765000';
+
+      window.clearTimeout(status.dataset.timerId);
+      const timerId = window.setTimeout(function() {
+        status.classList.remove('is-visible');
+      }, 9000);
+      status.dataset.timerId = String(timerId);
+    }
+
+    function formatPhone(phone) {
+      const cleaned = (phone || '').trim();
+      const match = cleaned.match(/^(.*?)(?:\s*Ext\.?\s*|\s*ext\.?\s*)(.+)$/);
+      if (match) {
+        return {
+          number: match[1].trim() + ' ',
+          hasExt: true,
+          ext: match[2].trim()
+        };
+      }
+      return {
+        number: cleaned,
+        hasExt: false,
+        ext: ''
+      };
+    }
+
+    function applyInfo() {
+      const name = document.getElementById('employeeName').value.trim();
+      const title = document.getElementById('employeeTitle').value.trim();
+      const email = document.getElementById('employeeEmail').value.trim();
+      const phone = document.getElementById('employeePhone').value.trim();
+
+      const sigName = document.getElementById('sigName');
+      const sigTitle = document.getElementById('sigTitle');
+      const sigEmail = document.getElementById('sigEmail');
+      const sigPhoneNumber = document.getElementById('sigPhoneNumber');
+      const sigPhoneExtLabel = document.getElementById('sigPhoneExtLabel');
+      const sigPhoneExt = document.getElementById('sigPhoneExt');
+
+      if (sigName) sigName.textContent = name;
+      if (sigTitle) sigTitle.textContent = title;
+      if (sigEmail) {
+        sigEmail.textContent = email;
+        if (email) {
+          sigEmail.setAttribute('href', 'mailto:' + email);
+        } else {
+          sigEmail.removeAttribute('href');
+        }
+      }
+
+      const phoneParts = formatPhone(phone);
+      if (sigPhoneNumber) sigPhoneNumber.textContent = phoneParts.number;
+      if (sigPhoneExtLabel) sigPhoneExtLabel.style.display = phoneParts.hasExt ? 'inline' : 'none';
+      if (sigPhoneExt) {
+        sigPhoneExt.style.display = phoneParts.hasExt ? 'inline' : 'none';
+        sigPhoneExt.textContent = phoneParts.ext;
+      }
+    }
+
+    function resetInfo() {
+      ['employeeName', 'employeeTitle', 'employeeEmail', 'employeePhone'].forEach(function(id) {
+        const field = document.getElementById(id);
+        if (field) field.value = '';
+      });
+      applyInfo();
+
+      document.querySelectorAll('.copy-status').forEach(function(status) {
+        status.textContent = '';
+        status.classList.remove('is-visible');
+      });
+
+      const firstField = document.getElementById('employeeName');
+      if (firstField) firstField.focus();
+    }
+
+    function selectElement(id) {
+      applyInfo();
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+
+    function prepareSignatureHtml(id) {
+      const el = document.getElementById(id);
+      const clone = el.cloneNode(true);
+
+      clone.querySelectorAll('a[href]').forEach(function(link) {
+        const href = link.getAttribute('href') || '';
+        if (href.indexOf('mailto:') === 0 || href.indexOf('tel:') === 0 || href.indexOf('http://') === 0 || href.indexOf('https://') === 0) {
+          link.setAttribute('href', href);
+        } else {
+          link.setAttribute('href', link.href);
+        }
+
+        const currentStyle = link.getAttribute('style') || '';
+        if (currentStyle.indexOf('text-decoration') === -1) {
+          link.setAttribute('style', currentStyle + ';text-decoration:none;');
+        }
+      });
+
+      return clone.innerHTML;
+    }
+
+    function signaturePlainTextWithUrls(id) {
+      const el = document.getElementById(id);
+      const text = el ? (el.innerText || '') : '';
+      const links = Array.prototype.slice.call(el ? el.querySelectorAll('a[href]') : [])
+        .map(function(link) {
+          const label = (link.innerText || '').replace(/\s+/g, ' ').trim();
+          const href = link.getAttribute('href');
+          return label && href ? label + ': ' + href : '';
+        })
+        .filter(Boolean)
+        .join('\n');
+
+      return links ? text + '\n\n' + links : text;
+    }
+
+    async function copyRichSignature(id, statusId) {
+      applyInfo();
+
+      const fragment = prepareSignatureHtml(id);
+      const htmlForClipboard = '<!doctype html><html><head><meta charset="utf-8"></head><body><!--StartFragment-->' + fragment + '<!--EndFragment--></body></html>';
+      const plainText = signaturePlainTextWithUrls(id);
+
+      function copyByClipboardEvent() {
+        return new Promise(function(resolve, reject) {
+          const listener = function(event) {
+            if (event.clipboardData) {
+              event.clipboardData.setData('text/html', htmlForClipboard);
+              event.clipboardData.setData('text/plain', plainText);
+              event.preventDefault();
+              resolve();
+            }
+          };
+
+          document.addEventListener('copy', listener, { once: true });
+
+          const dummy = document.createElement('textarea');
+          dummy.value = 'iSpice email signature';
+          dummy.setAttribute('readonly', 'readonly');
+          dummy.style.position = 'fixed';
+          dummy.style.left = '-9999px';
+          dummy.style.top = '0';
+          document.body.appendChild(dummy);
+          dummy.focus();
+          dummy.select();
+
+          const successful = document.execCommand('copy');
+          document.body.removeChild(dummy);
+
+          if (!successful) reject(new Error('copy command failed'));
+        });
+      }
+
+      try {
+        await copyByClipboardEvent();
+        showCopyStatus(statusId, 'Copied \u2713 Ready to paste into Outlook', true);
+      } catch (firstError) {
+        try {
+          if (navigator.clipboard && window.ClipboardItem) {
+            await navigator.clipboard.write([
+              new ClipboardItem({
+                'text/html': new Blob([htmlForClipboard], { type: 'text/html' }),
+                'text/plain': new Blob([plainText], { type: 'text/plain' })
+              })
+            ]);
+            showCopyStatus(statusId, 'Copied \u2713 Ready to paste into Outlook', true);
+          } else {
+            throw firstError;
+          }
+        } catch (secondError) {
+          selectElement(id);
+          showCopyStatus(statusId, 'Selected \u2014 press Ctrl+C / \u2318+C, then paste into Outlook', false);
+        }
+      }
+    }
+
+    applyInfo();
+  </script>
+
+<script>
+  window.iSpiceOurWebsitesPageUrl = "https://ispicefoods.com/our-websites/";
+</script>
+
+</body>
+</html>
