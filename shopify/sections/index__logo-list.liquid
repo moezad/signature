@@ -1,0 +1,320 @@
+{% comment %}
+** Logo list — upgraded to Family of Brands cards **
+{% endcomment %}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    {% if section.settings.width == 'wide' %}
+      width: 100%;
+    {% elsif section.settings.width == 'half' %}
+      width: 50%;
+    {% endif %}
+  }
+  #shopify-section-{{ section.id }} .fob-section { padding: 40px 0 50px; background: {{ section.settings.fob_background }}; }
+  #shopify-section-{{ section.id }} .fob-eyebrow { text-align: center; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: {{ section.settings.fob_accent }}; margin: 0 0 6px; font-weight: 600; }
+  #shopify-section-{{ section.id }} .fob-heading { text-align: center; margin: 0 0 8px; }
+  #shopify-section-{{ section.id }} .fob-subheading { text-align: center; margin: 0 auto 30px; max-width: 560px; opacity: 0.75; }
+  #shopify-section-{{ section.id }} .fob-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
+  #shopify-section-{{ section.id }} .fob-card { background: #ffffff; border: 1px solid #e4e4e4; padding: 28px 24px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; transition: box-shadow 0.2s ease, transform 0.2s ease; }
+  #shopify-section-{{ section.id }} .fob-card:hover { box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08); transform: translateY(-2px); }
+  #shopify-section-{{ section.id }} .fob-card--current { border-color: {{ section.settings.fob_accent }}; }
+  #shopify-section-{{ section.id }} .fob-logo { height: 64px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+  #shopify-section-{{ section.id }} .fob-logo img { max-height: 64px; width: auto; max-width: 200px; object-fit: contain; }
+  #shopify-section-{{ section.id }} .fob-label { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: {{ section.settings.fob_accent }}; margin: 0 0 4px; font-weight: 600; }
+  #shopify-section-{{ section.id }} .fob-title { font-size: 20px; margin: 0 0 10px; }
+  #shopify-section-{{ section.id }} .fob-text { font-size: 14px; line-height: 1.6; opacity: 0.8; margin: 0 0 18px; flex-grow: 1; }
+  #shopify-section-{{ section.id }} .fob-action { margin-top: auto; width: 100%; }
+  #shopify-section-{{ section.id }} .fob-btn { display: inline-block; background: #000000; color: #ffffff; padding: 12px 22px; font-size: 13px; letter-spacing: 0.05em; text-decoration: none; transition: background 0.2s ease; }
+  #shopify-section-{{ section.id }} .fob-btn:hover { background: {{ section.settings.fob_accent }}; color: #ffffff; }
+  #shopify-section-{{ section.id }} .fob-here { display: inline-block; border: 1px solid {{ section.settings.fob_accent }}; color: {{ section.settings.fob_accent }}; padding: 11px 22px; font-size: 13px; letter-spacing: 0.05em; font-weight: 600; }
+  @media screen and (max-width: 798px) {
+    #shopify-section-{{ section.id }} .fob-section { padding: 30px 15px 35px; }
+    #shopify-section-{{ section.id }} .fob-grid { gap: 14px; }
+  }
+  {% render 'css-loop', css: section.settings.custom_css, id: section.id %}
+{% endstyle %}
+
+{% comment %} HTML markup {% endcomment %}
+<section class="section {{ section.settings.css_class }} is-width-{{ section.settings.width }} fob-section"
+         {% if section.settings.animation != "none" %}data-scroll-class="{{ section.settings.animation }}"{% endif %}>
+  <div class="section-inner">
+
+    {% if section.settings.fob_eyebrow != blank %}
+      <p class="fob-eyebrow">{{ section.settings.fob_eyebrow }}</p>
+    {% endif %}
+    {% if section.settings.fob_heading != blank %}
+      <h2 class="fob-heading">{{ section.settings.fob_heading }}</h2>
+    {% endif %}
+    {% if section.settings.fob_subheading != blank %}
+      <p class="fob-subheading">{{ section.settings.fob_subheading }}</p>
+    {% endif %}
+
+    <div class="fob-grid">
+
+      {% if section.settings.fob_show_current %}
+        <div class="fob-card fob-card--current">
+          <div class="fob-logo">
+            <img src="https://www.ispiceyou.com/cdn/shop/files/IspiceYou-logo-with-branch_663f867d-b3ff-468e-894f-5555ed0c1d45_400x.png" alt="iSpice You" loading="lazy">
+          </div>
+          <p class="fob-label">Retail Store</p>
+          <h3 class="fob-title">iSpice You</h3>
+          <p class="fob-text">Home-kitchen sizes, gift sets, bundles, and everyday seasonings.</p>
+          <div class="fob-action"><span class="fob-here">You Are Here</span></div>
+        </div>
+      {% endif %}
+
+      {% for block in section.blocks %}
+        {%- assign brand_name = block.settings.title -%}
+        {%- assign brand_text = block.settings.text -%}
+        {%- assign brand_btn = 'Learn More' -%}
+        {%- if block.settings.link contains 'ispicefoods' -%}
+          {%- assign brand_name = 'iSpice Foods' -%}
+          {%- assign brand_btn = 'Visit ispicefoods.com' -%}
+          {%- if brand_text == blank -%}
+            {%- assign brand_text = 'Bulk supply, manufacturing, and private-label programs for food businesses.' -%}
+          {%- endif -%}
+        {%- elsif block.settings.link contains 'ispicepros' -%}
+          {%- assign brand_name = 'iSpice Pros' -%}
+          {%- assign brand_btn = 'Visit ispicepros.com' -%}
+          {%- if brand_text == blank -%}
+            {%- assign brand_text = 'Restaurant-size jugs, pails, and shakers with wholesale ordering.' -%}
+          {%- endif -%}
+        {%- endif -%}
+        <div class="fob-card" {{ block.shopify_attributes }}>
+          {% if block.settings.image != blank %}
+            <div class="fob-logo">
+              {% if block.settings.link != blank %}<a href="{{ block.settings.link }}" target="_blank" rel="noopener">{% endif %}
+              {{ block.settings.image | image_url: width: 480 | image_tag: loading: 'lazy', alt: brand_name }}
+              {% if block.settings.link != blank %}</a>{% endif %}
+            </div>
+          {% endif %}
+          {% if block.settings.title != blank %}
+            <p class="fob-label">{{ block.settings.title }}</p>
+          {% endif %}
+          {% if brand_name != blank %}
+            <h3 class="fob-title">{{ brand_name }}</h3>
+          {% endif %}
+          {% if brand_text != blank %}
+            <p class="fob-text">{{ brand_text }}</p>
+          {% endif %}
+          {% if block.settings.link != blank %}
+            <div class="fob-action"><a class="fob-btn" href="{{ block.settings.link }}" target="_blank" rel="noopener">{{ brand_btn }}</a></div>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+  {
+    "name": "Our Network (Brand Cards)",
+    "class": "logo-list",
+    "max_blocks": 20,
+    "settings": [
+      {
+        "type": "header",
+        "content": "Family of Brands"
+      },
+      {
+        "type": "text",
+        "id": "fob_eyebrow",
+        "label": "Eyebrow",
+        "default": "The iSpice Family"
+      },
+      {
+        "type": "text",
+        "id": "fob_heading",
+        "label": "Heading",
+        "default": "One Family, Three Ways to Buy"
+      },
+      {
+        "type": "text",
+        "id": "fob_subheading",
+        "label": "Subheading",
+        "default": "You're shopping our retail store. Buying for a business? We've got you covered."
+      },
+      {
+        "type": "checkbox",
+        "id": "fob_show_current",
+        "label": "Show iSpice You card",
+        "default": true
+      },
+      {
+        "type": "color",
+        "id": "fob_accent",
+        "label": "Accent color",
+        "default": "#4C8C3C"
+      },
+      {
+        "type": "color",
+        "id": "fob_background",
+        "label": "Section background",
+        "default": "#f7f7f4"
+      },
+      {
+        "type": "header",
+        "content": "Legacy settings"
+      },
+      {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading (legacy, unused)"
+      },
+      {
+        "type": "range",
+        "id": "logos_per_row",
+        "label": "Logos per row",
+        "min": 1,
+        "max": 8,
+        "default": 5
+      },
+      {
+        "type": "select",
+        "id": "logo_size",
+        "label": "Logo size",
+        "default": "medium",
+        "options": [
+          { "value": "small", "label": "Small" },
+          { "value": "medium", "label": "Medium" },
+          { "value": "large", "label": "Large" }
+        ]
+      },
+      {
+        "type": "color",
+        "id": "background",
+        "label": "Background (legacy)",
+        "default": "rgba(0,0,0,0)"
+      },
+      {
+        "type": "color",
+        "id": "gradient",
+        "label": "Gradient (legacy)",
+        "default": "rgba(0,0,0,0)"
+      },
+      {
+        "type": "range",
+        "id": "gradient_rotation",
+        "label": "Gradient rotation",
+        "min": 0,
+        "max": 180,
+        "step": 10,
+        "default": 0,
+        "unit": "deg"
+      },
+      {
+        "type": "select",
+        "id": "width",
+        "label": "Width",
+        "default": "standard",
+        "options": [
+          { "value": "half", "label": "Half" },
+          { "value": "standard", "label": "Standard" },
+          { "value": "wide", "label": "Wide" }
+        ]
+      },
+      {
+        "type": "range",
+        "id": "padding_top",
+        "label": "Top spacing (legacy)",
+        "min": 0,
+        "max": 80,
+        "default": 20,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "padding_bottom",
+        "label": "Bottom spacing (legacy)",
+        "min": 0,
+        "max": 80,
+        "default": 0,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "padding_left",
+        "label": "Left spacing (legacy)",
+        "min": 0,
+        "max": 80,
+        "default": 0,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "padding_right",
+        "label": "Right spacing (legacy)",
+        "default": 0,
+        "min": 0,
+        "max": 80,
+        "unit": "px"
+      },
+      {
+        "type": "select",
+        "id": "animation",
+        "label": "Animation",
+        "default": "none",
+        "options": [
+          { "value": "none", "label": "None" },
+          { "value": "fadeIn", "label": "Fade in" },
+          { "value": "fadeInDown", "label": "Fade in down" },
+          { "value": "fadeInLeft", "label": "Fade in left" },
+          { "value": "fadeInRight", "label": "Fade in right" },
+          { "value": "slideInLeft", "label": "Slide in left" },
+          { "value": "slideInRight", "label": "Slide in right" },
+          { "value": "zoomIn", "label": "Zoom in" }
+        ]
+      },
+      {
+        "type": "text",
+        "id": "css_class",
+        "label": "CSS Class"
+      },
+      {
+        "type": "textarea",
+        "id": "custom_css",
+        "label": "Custom CSS"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "logo_image",
+        "name": "Brand card",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Logo",
+            "info": "800 x 800px recommended"
+          },
+          {
+            "type": "url",
+            "id": "link",
+            "label": "Link"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Small label (e.g. Wholesale Business)"
+          },
+          {
+            "type": "text",
+            "id": "text",
+            "label": "Description (optional)"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Our Network (Brand Cards)",
+        "category": "Image",
+        "blocks": [
+          { "type": "logo_image" },
+          { "type": "logo_image" }
+        ]
+      }
+    ]
+  }
+{% endschema %}

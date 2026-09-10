@@ -1,0 +1,104 @@
+<section class="section is-width-standard fob-section">
+  <div class="section-inner">
+    {% if section.settings.eyebrow != blank %}
+      <p class="fob-eyebrow">{{ section.settings.eyebrow }}</p>
+    {% endif %}
+    {% if section.settings.heading != blank %}
+      <h2 class="fob-heading">{{ section.settings.heading }}</h2>
+    {% endif %}
+    {% if section.settings.subheading != blank %}
+      <p class="fob-subheading">{{ section.settings.subheading }}</p>
+    {% endif %}
+
+    <div class="fob-grid fob-grid--{{ section.blocks.size }}">
+      {% for block in section.blocks %}
+        <div class="fob-card{% if block.settings.is_current %} fob-card--current{% endif %}" {{ block.shopify_attributes }}>
+          {% if block.settings.image != blank %}
+            <div class="fob-logo">
+              {% if block.settings.link != blank and block.settings.is_current == false %}
+                <a href="{{ block.settings.link }}" target="_blank" rel="noopener">
+                  {{ block.settings.image | image_url: width: 480 | image_tag: loading: 'lazy', alt: block.settings.title }}
+                </a>
+              {% else %}
+                {{ block.settings.image | image_url: width: 480 | image_tag: loading: 'lazy', alt: block.settings.title }}
+              {% endif %}
+            </div>
+          {% endif %}
+          {% if block.settings.label != blank %}
+            <p class="fob-label">{{ block.settings.label }}</p>
+          {% endif %}
+          {% if block.settings.title != blank %}
+            <h3 class="fob-title">{{ block.settings.title }}</h3>
+          {% endif %}
+          {% if block.settings.text != blank %}
+            <p class="fob-text">{{ block.settings.text }}</p>
+          {% endif %}
+          <div class="fob-action">
+            {% if block.settings.is_current %}
+              <span class="fob-here">{{ block.settings.button_label | default: 'You are here' }}</span>
+            {% elsif block.settings.link != blank %}
+              <a class="fob-btn" href="{{ block.settings.link }}" target="_blank" rel="noopener">{{ block.settings.button_label | default: 'Learn more' }}</a>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .fob-section { padding: 40px 0 50px; background: {{ section.settings.background }}; }
+  .fob-eyebrow { text-align: center; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: {{ section.settings.accent_color }}; margin: 0 0 6px; font-weight: 600; }
+  .fob-heading { text-align: center; margin: 0 0 8px; }
+  .fob-subheading { text-align: center; margin: 0 auto 30px; max-width: 560px; opacity: 0.75; }
+  .fob-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
+  .fob-card { background: #ffffff; border: 1px solid #e4e4e4; padding: 28px 24px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; transition: box-shadow 0.2s ease, transform 0.2s ease; }
+  .fob-card:hover { box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08); transform: translateY(-2px); }
+  .fob-card--current { border-color: {{ section.settings.accent_color }}; }
+  .fob-logo { height: 64px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+  .fob-logo img { max-height: 64px; width: auto; max-width: 200px; object-fit: contain; }
+  .fob-label { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: {{ section.settings.accent_color }}; margin: 0 0 4px; font-weight: 600; }
+  .fob-title { font-size: 20px; margin: 0 0 10px; }
+  .fob-text { font-size: 14px; line-height: 1.6; opacity: 0.8; margin: 0 0 18px; flex-grow: 1; }
+  .fob-action { margin-top: auto; width: 100%; }
+  .fob-btn { display: inline-block; background: #000000; color: #ffffff; padding: 12px 22px; font-size: 13px; letter-spacing: 0.05em; text-decoration: none; transition: background 0.2s ease; }
+  .fob-btn:hover { background: {{ section.settings.accent_color }}; color: #ffffff; }
+  .fob-here { display: inline-block; border: 1px solid {{ section.settings.accent_color }}; color: {{ section.settings.accent_color }}; padding: 11px 22px; font-size: 13px; letter-spacing: 0.05em; font-weight: 600; }
+  @media screen and (max-width: 798px) {
+    .fob-section { padding: 30px 15px 35px; }
+    .fob-grid { gap: 14px; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Family of Brands",
+  "class": "family-of-brands-section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The iSpice Family" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "One Family, Three Ways to Buy" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "You're shopping our retail store. Buying for a business? We've got you covered." },
+    { "type": "color", "id": "accent_color", "label": "Accent color", "default": "#4C8C3C" },
+    { "type": "color", "id": "background", "label": "Background", "default": "#f7f7f4" }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Brand card",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Logo" },
+        { "type": "text", "id": "title", "label": "Title" },
+        { "type": "text", "id": "label", "label": "Small label" },
+        { "type": "textarea", "id": "text", "label": "Description" },
+        { "type": "url", "id": "link", "label": "Link" },
+        { "type": "text", "id": "button_label", "label": "Button label" },
+        { "type": "checkbox", "id": "is_current", "label": "This is the current site", "default": false }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    { "name": "Family of Brands", "category": "Custom" }
+  ]
+}
+{% endschema %}
